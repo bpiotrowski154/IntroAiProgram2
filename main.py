@@ -23,7 +23,9 @@ for i in range(1000):
     for i in activities:
         currentActivity = [0] #assigns base fitness of 0
         currentActivity.append(i)
-        currentActivity.append(random.choice(rooms))
+        room = random.choice(rooms)
+        currentActivity.append(room[0])
+        currentActivity.append(room[1])
         currentActivity.append(random.choice(times))
         currentActivity.append(random.choice(facilitators))
         schedule.append(currentActivity)

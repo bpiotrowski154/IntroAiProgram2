@@ -27,6 +27,8 @@ class Activity:
 def fitness(schedule):
     fitnessNum = 0
     for activity in schedule:
+        if isinstance(activity,float):
+            continue
         match (activity[1]):
             case 'sla100A':
                 activityPreferences = Activity(50, ("Glen","Lock","Banks","Zeldin"), ("Numen","Richards"))
@@ -185,8 +187,9 @@ def naturalSelection(population):
         scheduleFitness = 0
         scheduleFitness = fitness(schedule)
         schedule.insert(0, scheduleFitness)
-    for i in range(500):
-        population[i] = newPopulation[i]
+    # for i in range(500):
+    #     population[i] = newPopulation[i]
+    return newPopulation
 
 def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to the next generation
     newGeneration = []
@@ -195,11 +198,6 @@ def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to
         schedule2 = random.choice(matingPool)
 
         newSchedules = crossover(schedule1, schedule2)
-        # crossover(schedule1, schedule2)
-        # mutate(schedule1, 0.01)
-        # mutate(schedule2, 0.01)
-        # newGeneration.append(schedule1)
-        # newGeneration.append(schedule2)
         mutate(newSchedules[0], 0.01)
         mutate(newSchedules[1], 0.01)
         newGeneration.append(newSchedules[0])
@@ -207,28 +205,40 @@ def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to
     return newGeneration
 
 def crossover(schedule1, schedule2):    #Crossover of form [m,d,m,d,m,d,m,d,m,...] for child 1 and [d,m,d,m,d,m,d,m,d,m,...] for child 2
-    newSchedule1 = []
-    newSchedule2 = []
+    # newSchedule1 = [] 
+    # newSchedule2 = []
+    newSchedule1 = [None] * (len(schedule1))
+    newSchedule2 = [None] * (len(schedule1))
+    
 
-    for i in range(11): #11 classes
-        if i % 2 == 0:
-            schedule1[i+1][0] = 0
-            schedule2[i+1][0] = 0
-            newSchedule1.append(copy.deepcopy(schedule1[i+1]))
-            newSchedule2.append(copy.deepcopy(schedule2[i+1]))
-            # newSchedule1.append(schedule1[i+1])
-            # newSchedule2.append(schedule2[i+1])
-        else:
-            schedule1[i+1][0] = 0
-            schedule2[i+1][0] = 0
-            # activity1 = schedule2[i+1].copy()
-            # activity2 = schedule1[i+1].copy()
-            # newSchedule1.append(activity1)
-            # newSchedule2.append(activity2)
-            newSchedule1.append(copy.deepcopy(schedule2[i+1]))
-            newSchedule2.append(copy.deepcopy(schedule1[i+1]))
-            # newSchedule1.append(schedule2[i+1])
-            # newSchedule2.append(schedule1[i+1])
+    for i in range(11):
+        schedule1[i+1][0] = 0
+        schedule2[i+1][0] = 0
+
+    newSchedule1[0::2] = schedule1[0::2]
+    newSchedule1[1::2] = schedule2[1::2]
+    newSchedule2[0::2] = schedule2[0::2]
+    newSchedule2[1::2] = schedule1[1::2]
+
+    # for i in range(11): #11 classes
+    #     if i % 2 == 0:
+    #         schedule1[i+1][0] = 0
+    #         schedule2[i+1][0] = 0
+    #         newSchedule1.append(copy.deepcopy(schedule1[i+1]))
+    #         newSchedule2.append(copy.deepcopy(schedule2[i+1]))
+    #         # newSchedule1.append(schedule1[i+1])
+    #         # newSchedule2.append(schedule2[i+1])
+    #     else:
+    #         schedule1[i+1][0] = 0
+    #         schedule2[i+1][0] = 0
+    #         # activity1 = schedule2[i+1].copy()
+    #         # activity2 = schedule1[i+1].copy()
+    #         # newSchedule1.append(activity1)
+    #         # newSchedule2.append(activity2)
+    #         newSchedule1.append(copy.deepcopy(schedule2[i+1]))
+    #         newSchedule2.append(copy.deepcopy(schedule1[i+1]))
+    #         # newSchedule1.append(schedule2[i+1])
+    #         # newSchedule2.append(schedule1[i+1])
     
     return [newSchedule1,newSchedule2]
     # schedule1[:] = copy.deepcopy(newSchedule1)

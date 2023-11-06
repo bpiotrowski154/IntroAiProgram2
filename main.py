@@ -44,4 +44,5 @@ for i in range(100):
     population.sort(key= lambda x: x[0])
     print(population[0])
     print()
-    modules.naturalSelection(population)
+    # modules.naturalSelection(population)
+    population = modules.naturalSelection(population)

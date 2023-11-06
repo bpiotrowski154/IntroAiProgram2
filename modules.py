@@ -187,7 +187,7 @@ def naturalSelection(population):
                 
     #Create the next generation by reproduction throughout the matingpool
     newPopulation = reproduce(matingPool)
-    
+
     #Evaluate the new populations fitness
     for schedule in newPopulation:
         scheduleFitness = 0
@@ -205,8 +205,8 @@ def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to
 
         #Perform crossover of the 2 parents to create 2 children, then perform mutation
         newSchedules = crossover(schedule1, schedule2)
-        mutate(newSchedules[0], 0.00125)
-        mutate(newSchedules[1], 0.00125)
+        mutate(newSchedules[0], 0.0025)
+        mutate(newSchedules[1], 0.0025)
         newGeneration.append(newSchedules[0])
         newGeneration.append(newSchedules[1])
     return newGeneration

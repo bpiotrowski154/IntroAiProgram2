@@ -60,3 +60,11 @@ while improvement > .01:
     print(population[0])
     improvement = (population[0][0] - gen100[0][0]) / abs(gen100[0][0])
     print()
+
+f = open("output.txt", "w")
+f.write(f"Final Schedule Fitness Score: {str(population[0][0])} \n")
+f.write("Fitness - Activity - Room - Time - Facilitator\n")
+f.write("----------------------------------------------\n")
+for i in range(11):
+    f.write(f"{str(population[0][i+1][0])} - {str(population[0][i+1][1])} - {str(population[0][i+1][2])} - {str(population[0][i+1][4])} - {str(population[0][i+1][5])}\n")
+f.close()

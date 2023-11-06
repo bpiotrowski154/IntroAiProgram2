@@ -170,36 +170,43 @@ def naturalSelection(population):
     fitnessValues=[]
     for schedule in population:
         fitnessValues.append(schedule[0])
-    # print(fitnessValues)
     normalized = softmax(fitnessValues)
-    # print(normalized)
 
     #Select 500 schedules to reproduce
-    while len(matingPool) != 250:
+    while len(matingPool) != 500:
         randomNum = random.random()
-        for elem in normalized:
+
+        #Loop through activity and add each element that is greater than the random number until mating pool is 500
+        for elem in normalized: 
+            if len(matingPool) > 500:
+                break
             if elem >= randomNum:
                 matingPool.append(population[np.where(normalized == elem)[0][0]])
+        if len(matingPool) > 500:
                 break
-    
+                
+    #Create the next generation by reproduction throughout the matingpool
     newPopulation = reproduce(matingPool)
+    
+    #Evaluate the new populations fitness
     for schedule in newPopulation:
         scheduleFitness = 0
         scheduleFitness = fitness(schedule)
         schedule.insert(0, scheduleFitness)
-    # for i in range(500):
-    #     population[i] = newPopulation[i]
+
     return newPopulation
 
 def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to the next generation
     newGeneration = []
-    for i in range(250):
+    for i in range(500):
+        #Select to random parents from matingPool
         schedule1 = random.choice(matingPool)
         schedule2 = random.choice(matingPool)
 
+        #Perform crossover of the 2 parents to create 2 children, then perform mutation
         newSchedules = crossover(schedule1, schedule2)
-        mutate(newSchedules[0], 0.01)
-        mutate(newSchedules[1], 0.01)
+        mutate(newSchedules[0], 0.00125)
+        mutate(newSchedules[1], 0.00125)
         newGeneration.append(newSchedules[0])
         newGeneration.append(newSchedules[1])
     return newGeneration
@@ -207,42 +214,15 @@ def reproduce(matingPool): #Generates 2 children from 2 parents and adds them to
 def crossover(schedule1, schedule2):
     newSchedule1 = [None]*11
     newSchedule2 = [None]*11
-    for i in range(11):
+    for i in range(11): #reset the activity fitness values to 0
         schedule1[i+1][0] = 0
         schedule2[i+1][0] = 0
-    newSchedule1[0:6] = copy.deepcopy(schedule1[1:6])
-    newSchedule1[5:] = copy.deepcopy(schedule2[6:])
-    newSchedule2[0:6] = copy.deepcopy(schedule2[1:6])
-    newSchedule2[5:] = copy.deepcopy(schedule1[6:])
+    newSchedule1[0:6] = copy.deepcopy(schedule1[1:6]) #newSchedule1 = [1,1,1,1,1,n,n,n,n,n,n]
+    newSchedule1[5:] = copy.deepcopy(schedule2[6:])   #newSchedule1 = [1,1,1,1,1,2,2,2,2,2,2]
+    newSchedule2[0:6] = copy.deepcopy(schedule2[1:6]) #newSchedule2 = [2,2,2,2,2,n,n,n,n,n,n]
+    newSchedule2[5:] = copy.deepcopy(schedule1[6:])   #newSchedule2 = [2,2,2,2,2,1,1,1,1,1,1]
 
     return [newSchedule1, newSchedule2]
-    
-
-
-# def crossover(schedule1, schedule2):    #Crossover of form [m,d,m,d,m,d,m,d,m,...] for child 1 and [d,m,d,m,d,m,d,m,d,m,...] for child 2
-#     newSchedule1 = [] 
-#     newSchedule2 = []
-
-#     for i in range(11): #11 classes
-#         if i % 2 == 0:
-#             schedule1[i+1][0] = 0
-#             schedule2[i+1][0] = 0
-#             # newSchedule1.append(copy.deepcopy(schedule1[i+1]))
-#             # newSchedule2.append(copy.deepcopy(schedule2[i+1]))
-#             newSchedule1.append(schedule1[i+1][:])
-#             newSchedule2.append(schedule2[i+1][:])
-#         else:
-#             schedule1[i+1][0] = 0
-#             schedule2[i+1][0] = 0
-#             # newSchedule1.append(copy.deepcopy(schedule2[i+1]))
-#             # newSchedule2.append(copy.deepcopy(schedule1[i+1]))
-#             newSchedule1.append(schedule2[i+1][:])
-#             newSchedule2.append(schedule1[i+1][:])
-    
-#     return [newSchedule1,newSchedule2]
-#     # schedule1[:] = copy.deepcopy(newSchedule1)
-#     # schedule2[:] = copy.deepcopy(newSchedule2)
-
 
 def mutate(schedule, mutationRate):
     rooms = [("Slater003",45), ("Roman216",30), ("Loft206",75), ("Roman201",50), 
@@ -251,6 +231,7 @@ def mutate(schedule, mutationRate):
     #10AM, 11AM, 12PM, 1PM, 2PM, 3PM  in 24 hour time
     times = [10, 11, 12, 13, 14, 15]
 
+    #Mutation randomly assigns a new room, time, and facilitator
     for activity in schedule:
         if isinstance(activity,float):
             continue

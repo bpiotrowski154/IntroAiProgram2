@@ -1,4 +1,5 @@
 import random
+import copy
 import modules
 
 #all activities MWF - 50 mins
@@ -15,7 +16,7 @@ activities = ["sla100A", "sla100B", "sla191A", "sla191B", "sla201",
 times = [10, 11, 12, 13, 14, 15]
 
 #Create initial population
-#2D list where each inner list has the form [fitness, activity, room, time, facilitator]
+#2D list where each inner list has the form [fitness, activity, room, capacity, time, facilitator]
 population = []
 for i in range(1000): 
     schedule = []
@@ -34,17 +35,28 @@ for i in range(1000):
     schedule.insert(0, fitness)
     population.append(schedule)
 
-# print("OLD GEN")
-# for x in population:    
-#     print(x)
-#     print()
-
-
-#Something is wrong with the way new generations are being created and their fitness values, may be due to how children are created and lists
-for i in range(100):
+i=0
+gen100 = []
+#Generate the first 100 generations
+while i < 100:
     print (f"Gen {i+1} Best Candidate")
-    population.sort(key= lambda x: x[0])
+    population.sort(key= lambda x: x[0], reverse=True)
     print(population[0])
     print()
+    if i == 99:
+        gen100 = copy.deepcopy(population)
+        i+=1
+        break
     # modules.naturalSelection(population)
     population = modules.naturalSelection(population)
+    i += 1
+
+improvement = 1
+#Keep generating new generations until the improvement after gen 100 is < 1%
+while improvement > .01:
+    population = modules.naturalSelection(population)
+    print (f"Gen {i+1} Best Candidate")
+    population.sort(key= lambda x: x[0], reverse=True)
+    print(population[0])
+    improvement = (population[0][0] - gen100[0][0]) / abs(gen100[0][0])
+    print()
